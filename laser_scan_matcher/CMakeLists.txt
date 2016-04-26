@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(laser_scan_matcher)
 
+#Include csm project code and compile it
+include( ${CMAKE_CURRENT_SOURCE_DIR}/csm/GetCSM.cmake )
+download_and_compile_csm()
+
 # List C++ dependencies on ros packages
 set( ROS_CXX_DEPENDENCIES
   roscpp
@@ -13,16 +17,11 @@ set( ROS_CXX_DEPENDENCIES
   nav_msgs)
 
 # Find catkin and all required ROS components
-find_package(catkin REQUIRED COMPONENTS ${ROS_CXX_DEPENDENCIES} rostest)
+find_package(catkin REQUIRED COMPONENTS ${ROS_CXX_DEPENDENCIES})
 find_package(PCL REQUIRED QUIET)
-
-# Find csm project
-find_package(PkgConfig)
-pkg_check_modules(csm REQUIRED csm)
 
 # Set include directories
 include_directories(include ${catkin_INCLUDE_DIRS} ${csm_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS})
-link_directories(${csm_LIBRARY_DIRS})
 
 # Declare info that other packages need to import library generated here
 catkin_package(
@@ -42,9 +41,18 @@ add_dependencies(laser_scan_matcher ${csm_EXPORTED_TARGETS} ${catkin_EXPORTED_TA
 add_library(laser_scan_matcher_nodelet src/laser_scan_matcher_nodelet.cpp)
 target_link_libraries(laser_scan_matcher_nodelet laser_scan_matcher)
 
-#Create node
+#Create nodes
 add_executable(laser_scan_matcher_node src/laser_scan_matcher_node.cpp)
 target_link_libraries( laser_scan_matcher_node laser_scan_matcher )
+
+add_executable(laser_scan_odometry_node src/laser_scan_matcher_odom.cpp)
+target_link_libraries(laser_scan_odometry_node ${catkin_LIBRARIES})
+
+add_executable(laser_scan_odometry_node_2 src/laser_scan_matcher_odom_2.cpp)
+target_link_libraries(laser_scan_odometry_node_2 ${catkin_LIBRARIES})
+
+add_executable(laser_scan_odometry_node_3 src/laser_scan_matcher_odom_3.cpp)
+target_link_libraries(laser_scan_odometry_node_3 ${catkin_LIBRARIES})
 
 #Install library
 install(TARGETS laser_scan_matcher laser_scan_matcher_nodelet
@@ -60,6 +68,10 @@ install(DIRECTORY include/laser_scan_matcher/
 install(TARGETS laser_scan_matcher_node
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION} )
 
+#Install odom node
+install(TARGETS laser_scan_odometry_node
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION} )
+
 #Install nodelet description
 install(FILES laser_scan_matcher_nodelet.xml
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION} )
@@ -68,5 +80,5 @@ install(FILES laser_scan_matcher_nodelet.xml
 install(DIRECTORY demo
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION} )
 
-add_rostest(test/run.test)
-add_rostest(test/covariance.test)
+#Install csm library
+install_csm()
