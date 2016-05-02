@@ -51,11 +51,8 @@ target_link_libraries( laser_scan_matcher_node laser_scan_matcher )
 add_executable(laser_scan_odometry_node src/laser_scan_matcher_odom.cpp)
 target_link_libraries(laser_scan_odometry_node ${catkin_LIBRARIES})
 
-add_executable(laser_scan_odometry_node_2 src/laser_scan_matcher_odom_2.cpp)
-target_link_libraries(laser_scan_odometry_node_2 ${catkin_LIBRARIES})
-
-add_executable(laser_scan_odometry_node_3 src/laser_scan_matcher_odom_3.cpp)
-target_link_libraries(laser_scan_odometry_node_3 ${catkin_LIBRARIES})
+add_executable(laser_scan_odometry_node_height src/laser_scan_matcher_odom_height.cpp)
+target_link_libraries(laser_scan_odometry_node_height ${catkin_LIBRARIES})
 
 #Install library
 install(TARGETS laser_scan_matcher laser_scan_matcher_nodelet
